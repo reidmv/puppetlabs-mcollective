@@ -9,13 +9,14 @@ class mcollective (
   $version         = 'present',
 
   # core configuration
+  $configdir        = '/etc/mcollective',
   $main_collective  = 'mcollective',
   $collectives      = 'mcollective',
   $connector        = 'activemq',
   $securityprovider = 'psk',
   $psk              = 'changemeplease',
   $factsource       = 'yaml',
-  $yaml_fact_path   = '/etc/mcollective/facts.yaml',
+  $yaml_fact_path   = "${configdir}/facts.yaml",
   $classesfile      = '/var/lib/puppet/state/classes.txt',
   $rpcauthprovider  = 'action_policy',
   $rpcauditprovider = 'logfile',
@@ -35,7 +36,7 @@ class mcollective (
   $middleware_admin_password = 'secret',
 
   # server-specific
-  $server_config_file = '/etc/mcollective/server.cfg',
+  $server_config_file = "${configdir}/server.cfg",
   $server_logfile     = '/var/log/mcollective.log',
   $server_loglevel    = 'info',
   $server_daemonize   = 1,
@@ -43,7 +44,7 @@ class mcollective (
   $server_package     = 'mcollective',
 
   # client-specific
-  $client_config_file  = '/etc/mcollective/client.cfg',
+  $client_config_file  = "${configdir}/client.cfg",
   $client_logger_type  = 'console',
   $client_loglevel     = 'warn',
   $client_package      = 'mcollective-client',
@@ -53,7 +54,7 @@ class mcollective (
   $ssl_server_public    = undef,
   $ssl_server_private   = undef,
   $ssl_client_certs     = 'puppet:///modules/mcollective/empty',
-  $ssl_client_certs_dir = '/etc/mcollective/clients',
+  $ssl_client_certs_dir = "${configdir}/clients",
 ) inherits mcollective::defaults {
 
   if $client or $server {
