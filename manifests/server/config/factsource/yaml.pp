@@ -4,13 +4,28 @@ class mcollective::server::config::factsource::yaml {
     fail("Use of private class ${name} by ${caller_module_name}")
   }
 
-  # This pattern originally from
-  # http://projects.puppetlabs.com/projects/mcollective-plugins/wiki/FactsFacterYAML
-  file { $mcollective::yaml_fact_path:
-    owner   => 'root',
+  $mco_etc = $mcollective::configdir
+
+  # Template uses:
+  #   - $mco_etc
+  file { "${mcollective::core_libdir}/refresh-mcollective-metadata":
+    owner   => '0',
     group   => '0',
-    mode    => '0400',
-    content => template('mcollective/facts.yaml.erb'),
+    mode    => '0755',
+    content => template('mcollective/refresh-mcollective-metadata.erb'),
+    before  => Cron['refresh-mcollective-metadata'],
+  }
+  cron { 'refresh-mcollective-metadata':
+    environment => "PATH=/opt/puppet/bin:${::path}",
+    command     => "${mcollective::core_libdir}/refresh-mcollective-metadata",
+    user        => 'root',
+    minute      => [ '0', '15', '30', '45' ],
+  }
+  exec { 'create-mcollective-metadata':
+    path    => "/opt/puppet/bin:${::path}",
+    command => "${mcollective::core_libdir}/refresh-mcollective-metadata",
+    creates => "${mco_etc}/facts.yaml",
+    require => File["${mcollective::core_libdir}/refresh-mcollective-metadata"],
   }
 
   mcollective::server::setting { 'factsource':
