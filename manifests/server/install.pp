@@ -14,7 +14,7 @@ class mcollective::server::install {
       # ruby-stomp as a dependency of mcollective, so hand specify
       package { $mcollective::ruby_stomp_package:
         ensure => $mcollective::ruby_stomp_ensure,
-        before => Package['mcollective'],
+        before => Package[$mcollective::server_package],
       }
     }
   }
